@@ -97,7 +97,9 @@ const Connect2Phantom: FC<Props> = (props) => {
             <>
             <button disabled={connected} onClick={connectHandler}>Connect To Phantom</button>
             <button disabled={!connected} onClick={disconnectHandler}>Disconnect From Phantom</button>
+            {connected &&
             <p>Balance: ${balance}</p>
+            }
             </>
             :
             <>

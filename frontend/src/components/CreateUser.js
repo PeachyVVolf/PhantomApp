@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Connect2Phantom from './Connect2Phantom';
 import { register, clearErrors, updateUsername } from '../actions/userActions';
 import { useDispatch, useSelector } from "react-redux";
+import profilePic from '../assets/images/UserProfilePic.png';
 
 const CreateUser = () => {
   
@@ -46,8 +47,9 @@ const CreateUser = () => {
           <>
             <button disabled={!userPubKey} onClick={registerUser}>Register User</button>
             <br/>
-            {user!== undefined && 
+            {user!== undefined && userPubKey && 
             <>
+              <img src={user.avatar !== undefined ? user.avatar.url : profilePic} width='200px'/>
               {changeUserName ? 
                 <>
                   <input type="text" id='newUsername' onChange={(e)=>setNewUsername(e.target.value)}/>
@@ -57,9 +59,10 @@ const CreateUser = () => {
                   {user.username || user.walletAddress}
                 </>
               }
-              {user.username || user.walletAddress ? 
+              {
+                user.username || user.walletAddress ? 
                 <>
-                  <button onClick={handleEditUsername}>{changeUserName? <>Save UserName</> : <>Edit Username</>}</button>
+                  <button onClick={handleEditUsername}>{changeUserName? <>Save UserName</> : <>Edit Profile</>}</button>
                 </>
                 :
                 <>
