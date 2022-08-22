@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Connect2Phantom from './Connect2Phantom';
-import { register, clearErrors, getUserDetails } from '../actions/userActions';
+import { register, clearErrors, updateUsername } from '../actions/userActions';
 import { useDispatch, useSelector } from "react-redux";
 
 const CreateUser = () => {
@@ -9,6 +9,8 @@ const CreateUser = () => {
   const{ error, loading, isAuthenticated, user } = useSelector(state => state.userDetails);
 
   const [ userPubKey, setUserPubKey ] = useState("");
+  const [ changeUserName, setChangeUserName ] = useState(false);
+  const [ newUsername, setNewUsername ] = useState("");
 
   useEffect(() => {
     if(error) {
@@ -24,24 +26,49 @@ const CreateUser = () => {
     dispatch(register(userData));
   }
 
-  const getUserData = (e) => {
-    const userData = {
-      "username":userPubKey
+  const handleEditUsername = (e) => {
+    e.preventDefault();
+    if(changeUserName){
+      const userData = {
+        "username": newUsername,
+        "walletAddress":userPubKey
+      }
+      dispatch(updateUsername(userData));
     }
-    dispatch(getUserDetails(userData));
+    setChangeUserName(!changeUserName);
   }
 
   return (
     <div>
       <Connect2Phantom setPub={setUserPubKey} />
         {
-          loading ? <div>Loading</div>:
+          loading ? <div>Loading!</div>:
           <>
             <button disabled={!userPubKey} onClick={registerUser}>Register User</button>
+            <br/>
+            {user!== undefined && 
+            <>
+              {changeUserName ? 
+                <>
+                  <input type="text" id='newUsername' onChange={(e)=>setNewUsername(e.target.value)}/>
+                </> 
+                : 
+                <>
+                  {user.username || user.walletAddress}
+                </>
+              }
+              {user.username || user.walletAddress ? 
+                <>
+                  <button onClick={handleEditUsername}>{changeUserName? <>Save UserName</> : <>Edit Username</>}</button>
+                </>
+                :
+                <>
+                </>
+              }
+            </>
+            }
           </>
         }
-        <br/>
-        {user.username || user.walletAddress}
         
     </div>
   )

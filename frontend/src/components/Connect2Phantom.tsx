@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Connection, PublicKey, clusterApiUrl } from '@solana/web3.js';
+import { getParsedNftAccountsByOwner} from "@nfteyez/sol-rayz";
 
 type PhantomEvent = "disconnect" | "connect" | "accountChanged";
 
@@ -12,6 +13,7 @@ interface PhantomProvider {
     disconnect: ()=>Promise<void>;
     on: (event: PhantomEvent, callback: (args:any)=>void) => void;
     isPhantom: boolean;
+    pubPhanKey: PublicKey;
 }
 
 type WindowWithSolana = Window & {
@@ -28,6 +30,7 @@ const Connect2Phantom: FC<Props> = (props) => {
     const [ provider, setProvider ] = useState<PhantomProvider | null>(null);
     const [ connected, setConnected ] = useState(false);
     const [ pubKey, setPubKey ] = useState<PublicKey | null>(null);
+    const [balance, setBalance] = useState<number>(0);
 
     useEffect(()=>{
         if("solana" in window) {
@@ -41,11 +44,31 @@ const Connect2Phantom: FC<Props> = (props) => {
         }
     }, []);
 
+    const getAllNFT = async() => {
+        const newConnection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+        let ownerToken = provider?.pubPhanKey.toBase58();
+        if(ownerToken !== undefined){
+            const nfts = await getParsedNftAccountsByOwner({
+                publicAddress: ownerToken,
+                connection: newConnection,
+              });
+            return nfts;
+        }
+    }
+
     useEffect(()=>{
         provider?.on("connect", (publicKey: PublicKey)=>{
             console.log(`connect event: ${publicKey}`);
             setConnected(true);
             setPubKey(publicKey);
+            const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+            // After Connecting
+            connection.getBalance(publicKey)
+            .then((value) => {
+                setBalance(value);
+            });
+            const allNFT = getAllNFT();
+            console.log(allNFT);
         });
         provider?.on("disconnect", ()=>{
             console.log("disconnect event");
@@ -57,6 +80,7 @@ const Connect2Phantom: FC<Props> = (props) => {
 
     const connectHandler: React.MouseEventHandler<HTMLButtonElement> = (event) => {
         console.log(`connect handler`);
+
         provider?.connect()
         .catch((err)=>{ console.log("connect ERROR:", err); });
     }
@@ -73,6 +97,7 @@ const Connect2Phantom: FC<Props> = (props) => {
             <>
             <button disabled={connected} onClick={connectHandler}>Connect To Phantom</button>
             <button disabled={!connected} onClick={disconnectHandler}>Disconnect From Phantom</button>
+            <p>Balance: ${balance}</p>
             </>
             :
             <>

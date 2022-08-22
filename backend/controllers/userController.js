@@ -33,3 +33,26 @@ exports.getUserData = catchAsyncErrors(async(req, res, next) => {
         user: user,
     });    
 })
+
+// Update Username
+exports.updateUsername = catchAsyncErrors(async(req, res, next) => {
+    const { username, walletAddress } = req.body;
+    const userExists = await User.findOne( { username: username } );
+    if(userExists){
+        res.status(200).json({
+            user: userExists,
+            message: "Username exists"
+        })
+        return;
+    }
+    const userFind = await User.findOne( { walletAddress: walletAddress } );
+    if(!userFind){
+        return next(new ErrorHandler("User Not Found", 404));
+    }
+    userFind.username = username;
+    await userFind.save();
+    res.status(201).json({
+        user: userFind,
+        messages: "UserName Edited"
+    })
+});

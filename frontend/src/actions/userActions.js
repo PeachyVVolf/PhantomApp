@@ -1,5 +1,10 @@
 import axios from "axios";
-import { REGISTER_FAIL, REGISTER_REQUEST, REGISTER_SUCCESS, CLEAR_ERRORS, USER_DETAILS_REQUEST, USER_DETAILS_SUCCESS, USER_DETAILS_FAIL } from '../constants/userConstants'
+import { 
+    REGISTER_FAIL, REGISTER_REQUEST, REGISTER_SUCCESS, 
+    CLEAR_ERRORS, 
+    USER_DETAILS_REQUEST, USER_DETAILS_SUCCESS, USER_DETAILS_FAIL, 
+    USERNAME_EDIT_REQUEST, USERNAME_EDIT_SUCCESS, USERNAME_EDIT_FAIL
+} from '../constants/userConstants'
 
 // Register
 export const register = (username) => async(dispatch) => {
@@ -28,6 +33,20 @@ export const getUserDetails = (username) => async(dispatch) => {
         dispatch({ type:USER_DETAILS_FAIL, payload: error })
     }
 };
+
+//Update Username
+export const updateUsername = (username) => async(dispatch) => {
+    try{
+        dispatch({type: USERNAME_EDIT_REQUEST});
+
+        const config = { headers: { "Content-Type": "application/json" }};
+        const { data } = await axios.post(`http://localhost:5000/api/user/edit`, username, config);
+        dispatch({ type: USERNAME_EDIT_SUCCESS, payload: data });
+
+    }catch (error) {
+        dispatch({ type:USERNAME_EDIT_FAIL, payload: error })
+    }
+}
 
 // Clearing Errors
 export const clearErrors = () => async (dispatch) => {
