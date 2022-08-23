@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Connect2Phantom from './Connect2Phantom';
-import { register, clearErrors, updateUsername } from '../actions/userActions';
+import { register, clearErrors, updateUsername, updateProfile } from '../actions/userActions';
 import { useDispatch, useSelector } from "react-redux";
 import profilePic from '../assets/images/UserProfilePic.png';
+import Connect2Solflare from './Connect2Solflare';
 
 const CreateUser = () => {
   
@@ -12,6 +13,7 @@ const CreateUser = () => {
   const [ userPubKey, setUserPubKey ] = useState("");
   const [ changeUserName, setChangeUserName ] = useState(false);
   const [ newUsername, setNewUsername ] = useState("");
+  const [ userProfile, setNewUserProfile ] = useState({});
 
   useEffect(() => {
     if(error) {
@@ -25,6 +27,21 @@ const CreateUser = () => {
       "walletAddress":userPubKey
     }
     dispatch(register(userData));
+  }
+
+  const setNewProfileImage = (e) =>{
+    e.preventDefault();
+    if(Object.keys(userProfile).length != 0){
+        const userData = {
+        "url": userProfile.data.image,
+        "walletAddress": userPubKey
+      }
+      dispatch(updateProfile(userData));
+    }
+    else{
+      console.log("No NFT Selected")
+    }
+    setNewUserProfile({});
   }
 
   const handleEditUsername = (e) => {
@@ -41,15 +58,17 @@ const CreateUser = () => {
 
   return (
     <div>
-      <Connect2Phantom setPub={setUserPubKey} />
+      <Connect2Phantom setPub={setUserPubKey} setImage={setNewUserProfile} />
+      <Connect2Solflare setPub={setUserPubKey}/>
         {
           loading ? <div>Loading!</div>:
           <>
             <button disabled={!userPubKey} onClick={registerUser}>Register User</button>
+            <button disabled={!userPubKey} onClick={setNewProfileImage}>New Profile Image</button>
             <br/>
             {user!== undefined && userPubKey && 
             <>
-              <img src={user.avatar !== undefined ? user.avatar.url : profilePic} width='200px'/>
+              <img src={user.url !== undefined ? user.url : profilePic} width='200px'/>
               {changeUserName ? 
                 <>
                   <input type="text" id='newUsername' onChange={(e)=>setNewUsername(e.target.value)}/>

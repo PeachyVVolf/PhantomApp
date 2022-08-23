@@ -56,3 +56,18 @@ exports.updateUsername = catchAsyncErrors(async(req, res, next) => {
         messages: "UserName Edited"
     })
 });
+
+// update profile pic
+exports.updateProfilePic = catchAsyncErrors(async(req, res, next) => {
+    const { url, walletAddress } = req.body;
+    const userFind = await User.findOne( { walletAddress: walletAddress } );
+    if(!userFind){
+        return next(new ErrorHandler("User Not Found", 404));
+    }
+    userFind.url = url;
+    await userFind.save();
+    res.status(201).json({
+        user: userFind,
+        messages: "User Profile Image Edited"
+    })
+});

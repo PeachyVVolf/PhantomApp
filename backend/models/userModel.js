@@ -9,15 +9,9 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:false,
     },
-    avatar:{
-        public_id:{
-            type: String,
-            required: false
-        },
-        url:{
-            type: String,
-            required: false
-        }
+    url:{
+        type: String,
+        required: false
     },
     role:{
         type:String,

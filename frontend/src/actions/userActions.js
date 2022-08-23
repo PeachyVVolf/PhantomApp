@@ -48,6 +48,21 @@ export const updateUsername = (username) => async(dispatch) => {
     }
 }
 
+//Update ProfilePic
+export const updateProfile = (image) => async(dispatch) => {
+    try{
+        dispatch({type: USERNAME_EDIT_REQUEST});
+
+        const config = { headers: { "Content-Type": "application/json" }};
+        const { data } = await axios.post(`http://localhost:5000/api/user/editPic`, image, config);
+        dispatch({ type: USERNAME_EDIT_SUCCESS, payload: data });
+
+    }catch (error) {
+        dispatch({ type:USERNAME_EDIT_FAIL, payload: error })
+    }
+}
+
+
 // Clearing Errors
 export const clearErrors = () => async (dispatch) => {
     dispatch({ type: CLEAR_ERRORS });
