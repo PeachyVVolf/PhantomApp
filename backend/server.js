@@ -14,8 +14,10 @@ mongoose.connect(process.env.DB_URI , {
 }).then(console.log("Mongo DB Connected")).catch(err=>console.log(err));
 
 const user = require("./routes/userRoute");
+const admin = require('./routes/adminRoutes');
 
 app.use("/api", user);
+app.use("/api", admin);
 
 app.listen(port, ()=> {
     console.log(`Server is running on port ${port}`);

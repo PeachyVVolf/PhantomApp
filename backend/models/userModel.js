@@ -21,6 +21,11 @@ const userSchema = new mongoose.Schema({
         type:Date,
         default: Date.now
     },
+    connectionStatus:{
+        type:Boolean,
+        required:true,
+        default:true
+    }
 });
 
 module.exports = mongoose.model("User", userSchema);

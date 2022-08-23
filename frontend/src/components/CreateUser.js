@@ -4,6 +4,7 @@ import { register, clearErrors, updateUsername, updateProfile } from '../actions
 import { useDispatch, useSelector } from "react-redux";
 import profilePic from '../assets/images/UserProfilePic.png';
 import Connect2Solflare from './Connect2Solflare';
+import CreateLobby from './Admin/CreateLobby';
 
 const CreateUser = () => {
   
@@ -60,6 +61,7 @@ const CreateUser = () => {
     <div>
       <Connect2Phantom setPub={setUserPubKey} setImage={setNewUserProfile} />
       <Connect2Solflare setPub={setUserPubKey}/>
+      <CreateLobby walletAdd={userPubKey} />
         {
           loading ? <div>Loading!</div>:
           <>
